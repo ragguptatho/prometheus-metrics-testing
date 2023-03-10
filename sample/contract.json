@@ -1,18 +1,10 @@
 {
-  "metricsUsed": {
+  "metrics": {
     "node_arp_entries": {
-      "label_keys": {
-        "instance": {},
-        "job": {},
-        "node": {}
-      }
-    },
-    "node_boot_time_seconds": {
       "label_keys": {
         "instance": {},
         "job": {}
       }
     }
-  },
-  "dashboards": null
+  }
 }

@@ -53,17 +53,17 @@ func init(){
 
 }
 
-func UnMarshallIntoMetricsInGrafana(file string) (MetricsInGrafana, error) {
+func UnMarshallIntoConsumerMetrics(file string) (ConsumerMetrics, error) {
 
 	buffer,err := loadFile(file)
 	if err!=nil{
-		return MetricsInGrafana{},err
+		return ConsumerMetrics{},err
 	}
-	var metricsInGrafana MetricsInGrafana
-	if err := json.Unmarshal(buffer, &metricsInGrafana); err != nil {
-		return MetricsInGrafana{}, err
+	var consumerMetrics ConsumerMetrics
+	if err := json.Unmarshal(buffer, &consumerMetrics); err != nil {
+		return ConsumerMetrics{}, err
 	}
-	return metricsInGrafana, nil
+	return consumerMetrics, nil
 }
 
 func GetLabels(metric string) ([]string, error) {

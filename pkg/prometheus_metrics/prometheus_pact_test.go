@@ -34,8 +34,8 @@ func TestMetricsPact(t *testing.T) {
 
 	pact.Setup(true)
 
-	responseMetricsInGrafana := MetricsInGrafana{
-		MetricsUsed: make(map[string]Metric),
+	responseMetricsInGrafana := ConsumerMetrics{
+		Metrics: make(map[string]Metric),
 	}
 
 	functionMappings := dsl.MessageHandlers{
@@ -43,14 +43,14 @@ func TestMetricsPact(t *testing.T) {
 
 			file := "../sample/contract.json"
 
-			metricsInGrafana,err := UnMarshallIntoMetricsInGrafana(file)
+			metricsInGrafana,err := UnMarshallIntoConsumerMetrics(file)
 		
 			if err != nil{
 				t.Errorf("got some error %s",err)
 			}
 
 		
-			for metric := range metricsInGrafana.MetricsUsed {
+			for metric := range metricsInGrafana.Metrics {
 				testName := fmt.Sprintf("running test for %s",metric)
 		
 				t.Run(testName, func(t *testing.T) {
@@ -59,7 +59,7 @@ func TestMetricsPact(t *testing.T) {
 
 					var expectedLabelKeys []string = make([]string, 0)
 					// get the label keys
-					for label := range metricsInGrafana.MetricsUsed[metric].LabelKeys {
+					for label := range metricsInGrafana.Metrics[metric].LabelKeys {
 						expectedLabelKeys = append(expectedLabelKeys, label)
 						responseActualLabelKeys[label] = void{}
 					}
@@ -72,7 +72,7 @@ func TestMetricsPact(t *testing.T) {
 						// check all the expectedLabelKeys are present in actualLabelKeys
 						t.Log(actualLabelKeys,expectedLabelKeys,responseActualLabelKeys)
 						assert.Subset(t, actualLabelKeys, expectedLabelKeys)
-						responseMetricsInGrafana.MetricsUsed[metric] = Metric{LabelKeys:responseActualLabelKeys}
+						responseMetricsInGrafana.Metrics[metric] = Metric{LabelKeys:responseActualLabelKeys}
 					}
 		
 				})
