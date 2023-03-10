@@ -1,0 +1,58 @@
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - promnet
+  node-exporter:
+    image: prom/node-exporter
+    ports:
+      - 9100:9100 
+    networks:
+      - promnet
+  pactbroker:
+    depends_on:
+    - postgres
+    image: pactfoundation/pact-broker
+    ports:
+      - 9292:9292
+    networks:
+    - pactnet
+    environment:
+      PACT_BROKER_PORT: '9292'
+      PACT_BROKER_DATABASE_URL: postgres://pact_broker:pact_broker@postgres/pact_broker
+      PACT_BROKER_DATABASE_CONNECT_MAX_RETRIES: "5"
+      PACT_BROKER_LOG_LEVEL: INFO
+      PACT_BROKER_SQL_LOG_LEVEL: DEBUG
+
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    networks:
+    - pactnet
+    environment:
+      POSTGRES_PASSWORD: pact_broker
+      POSTGRES_USER: pact_broker
+      POSTGRES_DB: pact_broker
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+    - pactnet
+
+networks:
+  pactnet:
+  promnet:
+
+volumes:
+  postgres-volume:
